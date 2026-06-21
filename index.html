@@ -85,6 +85,11 @@
   .takeaways{max-width:820px; margin:0 auto}
   .takeaways li{margin-bottom:10px; text-align:justify}
   footer{text-align:center; color:var(--muted); font-size:14px; padding:30px 22px 50px}
+  footer p{margin:6px auto; max-width:720px}
+  footer a{color:var(--link); text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  /* method architecture figure (inline SVG) */
+  .archfig svg{max-width:100%; height:auto; border:1px solid var(--line); border-radius:10px; background:#fff; padding:12px 8px}
   @media (max-width:720px){
     .cards{grid-template-columns:1fr} .grid2{grid-template-columns:1fr} .vidgrid{grid-template-columns:1fr}
     header.hero h1{font-size:25px} body{font-size:16px}
@@ -148,6 +153,68 @@
         <img src="assets/frame3.png" alt="输入帧3">
       </div>
       <figcaption>任务示例帧：右臂抓起立方体并交给左臂。每帧的相机图像与统一语言指令经冻结的 CLIP 编码、拼接后由轻量 MLP（1024→256→128→7）回归 7 自由度动作。</figcaption>
+    </figure>
+
+    <figure class="archfig">
+      <svg viewBox="0 0 1000 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="动作预测模型前向结构图">
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#5c6670"/>
+          </marker>
+          <style>
+            .b{rx:9; ry:9; stroke-width:1.5}
+            .t{font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",Roboto,Arial,sans-serif; fill:#1a1a1a; text-anchor:middle}
+            .t1{font-size:14px; font-weight:650}
+            .t2{font-size:11.5px; fill:#5c6670}
+            .ln{stroke:#5c6670; stroke-width:1.5; fill:none}
+          </style>
+        </defs>
+
+        <!-- 输入：相机图像 + 语言指令 -->
+        <rect class="b" x="18" y="34" width="150" height="62" fill="#f5f7f8" stroke="#c2c9cf"/>
+        <text class="t t1" x="93" y="60">相机图像 x&#8201;<tspan font-size="10" dy="3">i</tspan></text>
+        <text class="t t2" x="93" y="82">取自选出的核心集</text>
+
+        <rect class="b" x="18" y="150" width="150" height="62" fill="#eef3fb" stroke="#6b8fc0"/>
+        <text class="t t1" x="93" y="176">语言指令 &#8467;</text>
+        <text class="t t2" x="93" y="197">&#8220;Pick up the cube…&#8221;</text>
+
+        <!-- CLIP 编码器（冻结） -->
+        <rect class="b" x="210" y="32" width="196" height="66" fill="#e8f3f0" stroke="#4f8a7e"/>
+        <text class="t t1" x="308" y="58">CLIP 图像编码器 ❄</text>
+        <text class="t t2" x="308" y="80">&#966;(x&#8201;<tspan font-size="9" dy="3">i</tspan><tspan dy="-3">) ∈ &#8477;</tspan><tspan font-size="10" dy="-5">512</tspan></text>
+
+        <rect class="b" x="210" y="148" width="196" height="66" fill="#e8f3f0" stroke="#4f8a7e"/>
+        <text class="t t1" x="308" y="174">CLIP 文本编码器 ❄</text>
+        <text class="t t2" x="308" y="196">&#968;(&#8467;) ∈ &#8477;<tspan font-size="10" dy="-5">512</tspan></text>
+
+        <!-- 拼接 -->
+        <rect class="b" x="452" y="90" width="96" height="66" fill="#f1ecf8" stroke="#8a6fb0"/>
+        <text class="t t1" x="500" y="118">拼接</text>
+        <text class="t t2" x="500" y="138">&#8477;<tspan font-size="10" dy="-5">1024</tspan></text>
+
+        <!-- 轻量 MLP -->
+        <rect class="b" x="594" y="63" width="170" height="120" fill="#fbf1e4" stroke="#d08a3e"/>
+        <text class="t t1" x="679" y="92">轻量级 MLP</text>
+        <text class="t t2" x="679" y="116">FC 1024 → 256</text>
+        <text class="t t2" x="679" y="135">FC 256 → 128</text>
+        <text class="t t2" x="679" y="154">FC 128 → 7</text>
+
+        <!-- 预测动作 -->
+        <rect class="b" x="810" y="78" width="172" height="90" fill="#f8ece9" stroke="#c46a5a"/>
+        <text class="t t1" x="896" y="106">预测动作 &#226;&#8201;<tspan font-size="10" dy="3">i</tspan><tspan dy="-3"> ∈ &#8477;</tspan><tspan font-size="10" dy="-5">7</tspan></text>
+        <text class="t t2" x="896" y="130">6 维关节角</text>
+        <text class="t t2" x="896" y="148">+ 1 维夹具开合</text>
+
+        <!-- 连线 -->
+        <path class="ln" d="M168,65 H210" marker-end="url(#arr)"/>
+        <path class="ln" d="M168,181 H210" marker-end="url(#arr)"/>
+        <path class="ln" d="M406,65 H430 V112 H452" marker-end="url(#arr)"/>
+        <path class="ln" d="M406,181 H430 V134 H452" marker-end="url(#arr)"/>
+        <path class="ln" d="M548,123 H594" marker-end="url(#arr)"/>
+        <path class="ln" d="M764,123 H810" marker-end="url(#arr)"/>
+      </svg>
+      <figcaption>动作预测模型的前向结构（❄ = 冻结）。对核心集中的每一帧，相机图像 x<sub>i</sub> 与统一语言指令 ℓ 分别经<strong>冻结的</strong> CLIP 图像 / 文本编码器得到两个 512 维特征，拼接为 1024 维后由轻量级 MLP（1024→256→128→7）回归 7 自由度动作（6 维关节角 + 1 维夹具开合）。CLIP 全程冻结、仅做一次离线特征提取，唯一参与训练的是末端这个小 MLP——本文的核心不在模型本身，而在于<strong>用哪些帧来训练它</strong>。</figcaption>
     </figure>
   </div>
 </section>
@@ -369,7 +436,8 @@
 </section>
 
 <footer>
-  页面由静态 HTML 构建 · 无需服务器 · 可托管于 GitHub Pages　|　© 2026 李易阳
+  <p>本网站基于 <a href="https://nerfies.github.io/" target="_blank" rel="noopener">Nerfies</a> 项目主页模板构建。</p>
+  <p>© 2026 李易阳 · 华中科技大学 人工智能与自动化学院</p>
 </footer>
 
 </body>
