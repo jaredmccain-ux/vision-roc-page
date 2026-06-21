@@ -193,36 +193,36 @@
       <div class="segpairs">
         <div class="segpair">
           <div class="segcell">
-            <div class="ph">左臂抠图（待补）</div>
+            <img src="assets/seg/segL_000000.png" alt="左臂 SAM 3 抠图（帧 0）">
             <div class="cap"><b>左臂</b> φ<sub>seg</sub></div>
           </div>
           <div class="segcell">
-            <img src="assets/seg/seg_000208.png" alt="右臂 SAM 3 抠图（帧 208）">
+            <img src="assets/seg/segR_000000.png" alt="右臂 SAM 3 抠图（帧 0）">
             <div class="cap"><b>右臂</b> φ<sub>seg</sub></div>
           </div>
         </div>
         <div class="segpair">
           <div class="segcell">
-            <div class="ph">左臂抠图（待补）</div>
+            <img src="assets/seg/segL_000245.png" alt="左臂 SAM 3 抠图（帧 245）">
             <div class="cap"><b>左臂</b> φ<sub>seg</sub></div>
           </div>
           <div class="segcell">
-            <img src="assets/seg/seg_005791.png" alt="右臂 SAM 3 抠图（帧 5791）">
+            <img src="assets/seg/segR_000163.png" alt="右臂 SAM 3 抠图（帧 163）">
             <div class="cap"><b>右臂</b> φ<sub>seg</sub></div>
           </div>
         </div>
         <div class="segpair">
           <div class="segcell">
-            <div class="ph">左臂抠图（待补）</div>
+            <img src="assets/seg/segL_000393.png" alt="左臂 SAM 3 抠图（帧 393）">
             <div class="cap"><b>左臂</b> φ<sub>seg</sub></div>
           </div>
           <div class="segcell">
-            <img src="assets/seg/seg_011748.png" alt="右臂 SAM 3 抠图（帧 11748）">
+            <img src="assets/seg/segR_000294.png" alt="右臂 SAM 3 抠图（帧 294）">
             <div class="cap"><b>右臂</b> φ<sub>seg</sub></div>
           </div>
         </div>
       </div>
-      <figcaption>SAM 3 视觉净化示例（3 对“左臂 / 右臂”抠图）。每对的左、右分别为同一帧用 SAM 3 以概念提示 <code>cube／robot arm／gripper</code> 抠出的<strong>目标臂 + 夹爪 + 立方体</strong>（白底，按检测框中心分左右）。仅用抠图特征 φ<sub>seg</sub> 替换距离矩阵的视觉项（MLP 输入仍为整图），即可滤除背景与另一只臂对 CLIP 视觉距离的污染——对应上表 (b) 段两臂 MSE 的一致下降。（左臂示例待补。）</figcaption>
+      <figcaption>SAM 3 视觉净化示例（3 对“左臂 / 右臂”抠图）。每张为用 SAM 3 以概念提示 <code>cube／robot arm／gripper</code> 抠出的<strong>目标臂 + 夹爪 + 立方体</strong>（白底，按检测框中心分左右，左列为左臂、右列为右臂）。仅用抠图特征 φ<sub>seg</sub> 替换距离矩阵的视觉项（MLP 输入仍为整图），即可滤除背景与另一只臂对 CLIP 视觉距离的污染——对应上表 (b) 段两臂 MSE 的一致下降。</figcaption>
     </figure>
 
     <figure>
@@ -250,9 +250,9 @@
 <section id="videos">
   <div class="wrap">
     <h2>选中帧重组视频<span class="bar"></span></h2>
-    <p class="lead">为直观比较不同选择策略所保留样本的时序分布，我们将各方法选出的核心集（占训练帧的 10%，每臂 1800 帧）按原始时间顺序重组为视频。所有视频在相同分辨率与帧率下编码，可直接横向对比各方法究竟保留了哪些时段的帧。</p>
+    <p class="lead">为直观比较不同选择策略所保留样本的时序分布，特将各方法选出的核心集（占训练帧的 10%，每臂 1800 帧）按原始时间顺序重组为视频。所有视频在相同分辨率与帧率下编码，可直接横向对比各方法究竟保留了哪些时段的帧。每只臂先给出主表的四种方法（随机 / 仅动作 / 动作+视觉 / CRAIG），其下再以 <strong>2×2「整图 → 抠图」</strong>对照呈现「进一步实验」表的<strong>纯视觉</strong>与 <strong>SAM 3 分割净化</strong>版本，与定量表 (a)(b) 段逐一对应。</p>
 
-    <h3 class="vidhead">右臂</h3>
+    <h3 class="vidhead">右臂 · 核心度量与分量对照</h3>
     <div class="vidgrid">
       <figure>
         <video controls loop muted playsinline preload="metadata" src="assets/videos/right_random.mp4"></video>
@@ -272,7 +272,27 @@
       </figure>
     </div>
 
-    <h3 class="vidhead">左臂</h3>
+    <h3 class="vidhead">右臂 · SAM 3 视觉净化（整图 → 抠图）</h3>
+    <div class="vidgrid">
+      <figure>
+        <video controls loop muted playsinline preload="metadata" src="assets/videos/right_vis.mp4"></video>
+        <figcaption>纯视觉 · 整图（w<sub>a</sub>=0）</figcaption>
+      </figure>
+      <figure>
+        <video controls loop muted playsinline preload="metadata" src="assets/videos/right_vis_seg.mp4"></video>
+        <figcaption>纯视觉 · 抠图（φ<sub>seg</sub>）</figcaption>
+      </figure>
+      <figure>
+        <video controls loop muted playsinline preload="metadata" src="assets/videos/right_m2.mp4"></video>
+        <figcaption>动作 + 视觉 · 整图</figcaption>
+      </figure>
+      <figure>
+        <video controls loop muted playsinline preload="metadata" src="assets/videos/right_m2_seg.mp4"></video>
+        <figcaption>动作 + 视觉 · 抠图（全场最佳 0.952）</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="vidhead">左臂 · 核心度量与分量对照</h3>
     <div class="vidgrid">
       <figure>
         <video controls loop muted playsinline preload="metadata" src="assets/videos/left_random.mp4"></video>
@@ -289,6 +309,26 @@
       <figure>
         <video controls loop muted playsinline preload="metadata" src="assets/videos/left_m3.mp4"></video>
         <figcaption>梯度距离 CRAIG（核心度量 · 最优）</figcaption>
+      </figure>
+    </div>
+
+    <h3 class="vidhead">左臂 · SAM 3 视觉净化（整图 → 抠图）</h3>
+    <div class="vidgrid">
+      <figure>
+        <video controls loop muted playsinline preload="metadata" src="assets/videos/left_vis.mp4"></video>
+        <figcaption>纯视觉 · 整图（w<sub>a</sub>=0）</figcaption>
+      </figure>
+      <figure>
+        <video controls loop muted playsinline preload="metadata" src="assets/videos/left_vis_seg.mp4"></video>
+        <figcaption>纯视觉 · 抠图（φ<sub>seg</sub>）</figcaption>
+      </figure>
+      <figure>
+        <video controls loop muted playsinline preload="metadata" src="assets/videos/left_m2.mp4"></video>
+        <figcaption>动作 + 视觉 · 整图</figcaption>
+      </figure>
+      <figure>
+        <video controls loop muted playsinline preload="metadata" src="assets/videos/left_m2_seg.mp4"></video>
+        <figcaption>动作 + 视觉 · 抠图（全场最佳 0.952）</figcaption>
       </figure>
     </div>
 
